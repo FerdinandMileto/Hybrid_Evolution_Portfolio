@@ -574,7 +574,7 @@ export default function App() {
                             className="centered-artifact animate-fade-in relative w-full max-w-md mb-[-2vh] flex justify-center items-center"
                         >
                             <div className="absolute w-64 h-64 bg-cyan-500/20 rounded-full blur-[100px] animate-pulse-glow" />
-                            <img src="sacred_symbol.png" alt="The Artifact" className="w-full object-contain animate-float z-10" />
+                            <img src="/sacred_symbol.png" alt="The Artifact" className="w-full object-contain animate-float z-10" />
                         </motion.div>
 
                         {/* 5. FER LOGO */}
@@ -586,7 +586,7 @@ export default function App() {
                             className="w-full max-w-4xl mx-auto"
                         >
                             <img
-                                src="fer_logo.png"
+                                src="/fer_logo.png"
                                 alt="Fernando Berumen"
                                 className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
                             />
