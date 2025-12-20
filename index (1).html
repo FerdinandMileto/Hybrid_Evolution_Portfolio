@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FERNANDO BERUMEN | Intelligent Systems Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FUENTES FUTURISTAS Y ICONOS -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sci': ['Orbitron', 'sans-serif'],
+                        'body': ['Outfit', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 8s ease-in-out infinite',
+                        'pulse-glow': 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in': 'fadeIn 1.8s ease-out forwards',
+                        'glow-line': 'glowLine 3s ease-in-out infinite alternate',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-30px) rotate(2deg)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        glowLine: {
+                            '0%': { filter: 'drop-shadow(0 0 5px rgba(168, 85, 247, 0.4))' },
+                            '100%': { filter: 'drop-shadow(0 0 20px rgba(56, 189, 248, 0.8))' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary-glow: rgba(168, 85, 247, 0.4);
+            --secondary-glow: rgba(56, 189, 248, 0.4);
+        }
+
+        body {
+            background-color: #030014;
+            background-image:
+                radial-gradient(circle at 50% 10%, #1e0b45 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, #063047 0%, transparent 50%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .glassmorphism {
+            background: rgba(16, 14, 31, 0.3);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .service-card {
+            transform-style: preserve-3d;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #030014;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, transparent, var(--primary-glow), transparent);
+            border-radius: 10px;
+        }
+
+        .hero-section {
+            min-height: 250vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 10vh;
+            position: relative;
+        }
+
+        .hero-name-img {
+            filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.6)) drop-shadow(0 0 30px rgba(34, 211, 238, 0.4));
+        }
+
+        .gradient-text-live {
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .centered-manifesto {
+            text-align: center;
+            margin: 20vh 0 8vh 0;
+            width: 100%;
+        }
+
+        .centered-artifact {
+            margin-bottom: -2vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 100%;
+        }
+
+        /* CONTACT SYSTEM - DAEMON INTERFACE */
+        #contact-trigger {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #contact-trigger:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.8);
+        }
+
+        #contact-trigger svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+            transition: transform 0.3s ease;
+        }
+
+        #contact-portal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 0, 20, 0.95);
+            backdrop-filter: blur(25px);
+            z-index: 90;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #contact-portal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .contact-node {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .contact-node:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
+        }
+
+        .contact-node span {
+            position: absolute;
+            bottom: -30px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Orbitron';
+            opacity: 0.6;
+            white-space: nowrap;
+        }
+
+        .portal-center {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scanner-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px dashed rgba(168, 85, 247, 0.3);
+            border-radius: 50%;
+            animation: spin 20s linear infinite;
+        }
+
+        .status-glitch {
+            animation: statusPulse 0.5s ease;
+        }
+
+        @keyframes statusPulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.5;
+                color: #3b82f6;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="selection:bg-purple-500 selection:text-white">
+
+    <main class="relative z-10">
+        <!-- HERO SECTION RESTRUCTURED -->
+        <section id="hero" class="hero-section px-4">
+
+            <!-- 1. DAEMON TECH TITLE -->
+            <div class="animate-fade-in mb-4" style="animation-delay: 0.1s;">
+                <h1
+                    class="font-sci text-6xl md:text-9xl font-black italic tracking-tighter text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.3)]">
+                    DAEMON TECH
+                </h1>
+            </div>
+
+            <!-- 2. STACK LINE WITH GLOW -->
+            <div class="animate-fade-in text-center mb-16" style="animation-delay: 0.3s;">
+                <div
+                    class="flex flex-col md:flex-row gap-4 md:gap-12 items-center justify-center font-sci tracking-[0.2em] uppercase animate-glow-line bg-black/40 py-4 px-12 rounded-full border border-white/5 backdrop-blur-sm">
+                    <span class="text-sm md:text-xl font-bold text-slate-300">Data Science</span>
+                    <span class="hidden md:inline text-cyan-500 opacity-50">•</span>
+                    <span class="text-sm md:text-xl font-bold text-slate-300">Web3 & Blockchain</span>
+                    <span class="hidden md:inline text-purple-500 opacity-50">•</span>
+                    <span class="text-sm md:text-xl font-bold text-slate-300">Intelligent Automation</span>
+                </div>
+            </div>
+
+            <!-- 3. CENTERED MANIFESTO -->
+            <div class="centered-manifesto animate-fade-in" style="animation-delay: 0.6s;">
+                <div class="space-y-4 leading-none">
+                    <h3 class="text-5xl md:text-8xl font-black tracking-tighter text-white/90 uppercase">NOT HUMAN.</h3>
+                    <h3 class="text-5xl md:text-8xl font-black tracking-tighter text-white/90 uppercase">NOT AI.</h3>
+                    <h3
+                        class="text-6xl md:text-9xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-cyan-400 to-blue-600 drop-shadow-[0_0_50px_rgba(56,189,248,0.4)] gradient-text-live uppercase">
+                        ONLY ONE.
+                    </h3>
+                </div>
+            </div>
+
+            <!-- 4. THE ARTIFACT -->
+            <div class="centered-artifact animate-fade-in" style="animation-delay: 0.8s;">
+                <div class="absolute w-64 h-64 bg-cyan-500/20 rounded-full blur-[100px] animate-pulse-glow"></div>
+                <img src="sacred_symbol.png" alt="The Artifact"
+                    class="w-full max-w-md object-contain animate-float z-10">
+            </div>
+
+            <!-- 5. FERNANDO BERUMEN IMAGE -->
+            <div class="w-full max-w-4xl mx-auto animate-fade-in" style="animation-delay: 1.0s;">
+                <img src="fer_logo.png" alt="Fernando Berumen" class="hero-name-img w-full h-auto object-contain">
+            </div>
+
+            <!-- 6. INTELLIGENT SYSTEMS ENGINEER -->
+            <div class="mt-0 md:-mt-4 animate-fade-in text-center mb-40" style="animation-delay: 1.2s;">
+                <h2
+                    class="font-sci text-2xl md:text-5xl font-black tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-cyan-400 to-blue-600 drop-shadow-[0_0_35px_rgba(56,189,248,0.5)] gradient-text-live">
+                    Intelligent Systems Engineer
+                </h2>
+            </div>
+
+            <!-- SCROLL INDICATOR -->
+            <a href="#services" class="animate-bounce opacity-40 hover:opacity-100 transition duration-500 pb-20">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </a>
+        </section>
+
+        <!-- SERVICES SECTION -->
+        <section id="services" class="py-32 lg:py-48 px-4 bg-[#030014]">
+            <div class="max-w-6xl mx-auto text-center">
+                <h2 class="font-sci text-4xl lg:text-5xl font-bold mb-24 tracking-widest opacity-80 uppercase">Core
+                    Directives</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div
+                        class="service-card glassmorphism rounded-3xl p-10 border border-white/5 hover:border-purple-500/30">
+                        <h3
+                            class="font-sci text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500 uppercase tracking-wider">
+                            INTELLIGENT AUTOMATION</h3>
+                        <p class="text-gray-400 leading-relaxed text-lg">Desarrollo de codigo, sistemas, y procesos
+                            autónomos con pipelines de datos que optimizan la eficiencia y escalabilidad.</p>
+                    </div>
+                    <div
+                        class="service-card glassmorphism rounded-3xl p-10 border border-white/5 hover:border-cyan-500/30">
+                        <h3
+                            class="font-sci text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 uppercase tracking-wider">
+                            WEB 3 & BLOCKCHAIN</h3>
+                        <p class="text-gray-400 leading-relaxed text-lg">Arquitectura de soluciones descentralizadas,
+                            smart contracts y estrategias de tokenomics.</p>
+                    </div>
+                    <div
+                        class="service-card glassmorphism rounded-3xl p-10 border border-white/5 hover:border-orange-500/30">
+                        <h3
+                            class="font-sci text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-orange-400 uppercase tracking-wider">
+                            DATA CORE</h3>
+                        <p class="text-gray-400 leading-relaxed text-lg">Implementación de modelos de Machine Learning
+                            para extraer insights y predecir tendencias futuras, bases de datos y almacenamiento en la
+                            nube.</p>
+                    </div>
+                    <div
+                        class="service-card glassmorphism rounded-3xl p-10 border border-white/5 hover:border-red-600/30">
+                        <h3
+                            class="font-sci text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-purple-600 uppercase tracking-wider">
+                            BLACK OPS</h3>
+                        <p class="text-gray-400 leading-relaxed text-lg">Procesos avanzados de ciberseguridad y Hacking
+                            ético, scripts con operaciones especiales.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center py-20 px-4 border-t border-white/5 bg-[#030014]">
+            <p class="text-gray-600 font-mono text-xs tracking-[0.3em] uppercase">&copy; 2024 FERNANDO BERUMEN. Hybrid
+                Entity.</p>
+        </footer>
+
+        <!-- CONTACT SYSTEM -->
+        <div id="contact-trigger">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4M17,17H7V15H17V17M17,13H7V11H17V13M17,9H7V7H17V9Z" />
+            </svg>
+        </div>
+
+        <div id="contact-portal">
+            <div class="portal-center">
+                <div class="scanner-ring"></div>
+
+                <!-- NODOS DE CONTACTO -->
+                <div id="email-node" class="contact-node" style="--i:0">
+                    <i class="fa-solid fa-envelope"></i><span>Email</span>
+                </div>
+                <a href="https://wa.me/524428979803" target="_blank" class="contact-node" style="--i:1">
+                    <i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span>
+                </a>
+                <a href="https://t.me/ferdinanddmileto" target="_blank" class="contact-node" style="--i:2">
+                    <i class="fa-brands fa-telegram"></i><span>Telegram</span>
+                </a>
+                <a href="https://linkedin.com/in/fernandoberumen" target="_blank" class="contact-node" style="--i:3">
+                    <i class="fa-brands fa-linkedin"></i><span>LinkedIn</span>
+                </a>
+                <a href="https://github.com/FerdinandMileto" target="_blank" class="contact-node" style="--i:4">
+                    <i class="fa-brands fa-github"></i><span>GitHub</span>
+                </a>
+                <a href="https://discord.com/users/ferdinandmileto" target="_blank" class="contact-node" style="--i:5">
+                    <i class="fa-brands fa-discord"></i><span>Discord</span>
+                </a>
+
+                <div
+                    class="text-center z-10 p-8 glassmorphism rounded-full w-48 h-48 flex flex-col justify-center items-center border border-purple-500/20">
+                    <span class="font-sci text-[10px] tracking-[0.3em] opacity-40 mb-2">DAEMON LINK</span>
+                    <span id="portal-status"
+                        class="font-sci text-xs font-bold text-cyan-400 transition-all duration-300">ESTABLISHED</span>
+                </div>
+            </div>
+
+            <div id="close-portal"
+                class="absolute top-10 right-10 cursor-pointer font-sci text-sm tracking-widest opacity-50 hover:opacity-100 uppercase py-2 px-4 border border-white/10 rounded-full">
+                Close [Esc]
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Scroll Smooth
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // 3D Card Effect
+        const cards = document.querySelectorAll('.service-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2) * 8;
+                const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2) * -8;
+                card.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${x}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
+        // CONTACT SYSTEM LOGIC
+        const trigger = document.getElementById('contact-trigger');
+        const portal = document.getElementById('contact-portal');
+        const closePortal = document.getElementById('close-portal');
+        const nodes = document.querySelectorAll('.contact-node');
+        const portalStatus = document.getElementById('portal-status');
+        const emailNode = document.getElementById('email-node');
+
+        function togglePortal() {
+            const isActive = portal.classList.contains('active');
+            if (!isActive) {
+                portal.classList.add('active');
+                portalStatus.innerText = "ESTABLISHED";
+                portalStatus.classList.remove('text-green-400', 'status-glitch');
+                portalStatus.classList.add('text-cyan-400');
+
+                nodes.forEach((node, index) => {
+                    const angle = (index * (360 / nodes.length)) * (Math.PI / 180);
+                    const radius = window.innerWidth < 768 ? 120 : 200;
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+
+                    node.style.transform = `translate(${x}px, ${y}px) scale(0)`;
+                    setTimeout(() => {
+                        node.style.transform = `translate(${x}px, ${y}px) scale(1)`;
+                    }, index * 100 + 300);
+                });
+            } else {
+                portal.classList.remove('active');
+            }
+        }
+
+        // PROTOCOLO DE EMAIL ESPECIAL (Copy to Clipboard + Mailto fallback)
+        emailNode.addEventListener('click', () => {
+            const email = 'ferdinand.daemontech@proton.me';
+
+            // 1. Copiar al portapapeles
+            navigator.clipboard.writeText(email).then(() => {
+                // 2. Feedback visual "Mágico"
+                portalStatus.innerText = "COPIED TO CLIPBOARD";
+                portalStatus.classList.remove('text-cyan-400');
+                portalStatus.classList.add('text-green-400', 'status-glitch');
+
+                // 3. Fallback: Intentar abrir cliente de correo después de un pequeño delay
+                setTimeout(() => {
+                    window.location.href = `mailto:${email}`;
+                }, 800);
+
+                // 4. Resetear estado visual después de un tiempo
+                setTimeout(() => {
+                    portalStatus.innerText = "ESTABLISHED";
+                    portalStatus.classList.remove('text-green-400', 'status-glitch');
+                    portalStatus.classList.add('text-cyan-400');
+                }, 3000);
+            });
+        });
+
+        trigger.addEventListener('click', togglePortal);
+        closePortal.addEventListener('click', togglePortal);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && portal.classList.contains('active')) togglePortal();
+        });
+    </script>
+    <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
