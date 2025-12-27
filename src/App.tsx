@@ -12,7 +12,8 @@ import {
     Webhook,
     ShieldAlert,
     X,
-    MessageCircle
+    MessageCircle,
+    TrendingUp
 } from 'lucide-react';
 import { StatsSection } from './components/StatsSection';
 
@@ -28,31 +29,83 @@ interface Service {
 const SERVICES: Service[] = [
     {
         title: "Intelligent Automation",
-        description: "Desarrollo de código, sistemas, y procesos autónomos con pipelines de datos que optimizan la eficiencia y escalabilidad.",
+        description: "Desarrollo de ecosistemas autónomos, pipelines de datos resilientes y algoritmos de trading (Eros) con gestión de riesgo integrada.",
         icon: Cpu,
         color: "from-purple-400 to-pink-500"
     },
     {
         title: "Web 3 & Blockchain",
-        description: "Arquitectura de soluciones descentralizadas, smart contracts y estrategias de tokenomics.",
+        description: "Arquitectura de soluciones descentralizadas, smart contracts y estrategias de tokenomics (BioTrace & Veritas).",
         icon: Webhook,
         color: "from-cyan-400 to-blue-500"
     },
     {
         title: "Data Core",
-        description: "Implementación de modelos de Machine Learning para extraer insights y predecir tendencias futuras, bases de datos y almacenamiento en la nube.",
+        description: "Hub central de inteligencia empresarial, especializado en Marketplace Analytics, Retail Systems y análisis de inventario predictivo.",
         icon: Database,
         color: "from-pink-500 to-orange-400"
     },
     {
+        title: "Ecommerce Intelligence",
+        description: "Análisis estratégico y automatización para Amazon, ML y Shopify. Especializado en Unit Economics y optimización de rentabilidad multicanal.",
+        icon: TrendingUp,
+        color: "from-green-400 to-emerald-600"
+    },
+    {
         title: "Service Support & API",
-        description: "Arquitectura de soporte proactivo, integración de servicios web (REST/SOAP) y creación de ecosistemas de Self-Service para clientes.",
+        description: "Arquitectura de soporte proactivo, integración de servicios web (REST/SOAP) y automatización de diagnósticos técnicos.",
         icon: ShieldAlert,
         color: "from-red-500 to-purple-600"
     }
 ];
 
-// --- COMPONENTS ---
+// --- NEW COMPONENTS (HYBRID LAYER) ---
+
+const DaemonLogo = () => (
+    <div className="fixed top-8 left-8 z-[150] flex items-center gap-3 group">
+        <div className="daemon-symbol group-hover:scale-110 transition-transform">DT</div>
+        <span className="font-sci text-[10px] tracking-[4px] text-white/50 group-hover:text-cyan-400 transition-colors uppercase">DAEMON TECH</span>
+    </div>
+);
+
+const FeaturedSystem = () => (
+    <section className="section-container max-w-6xl mx-auto px-4 py-32">
+        <h2 className="font-sci text-[var(--accent-orange)] text-sm tracking-[6px] mb-12 uppercase">
+            [ FEATURED_SYSTEMS ]
+        </h2>
+
+        <div className="glassmorphism rounded-[30px] p-12 border border-white/5 relative overflow-hidden group badge-active">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+            <h3 className="font-sci text-5xl md:text-7xl font-black mb-6 text-white uppercase italic">
+                APIGuard
+            </h3>
+
+            <p className="text-gray-400 text-xl leading-relaxed max-w-3xl mb-12">
+                La unión entre la vigilancia constante y la integridad de datos. APIGuard es un centinela para arquitecturas SOAP/REST, diseñado para predecir fallos y asegurar la continuidad del flujo de información.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+                {["#JAVA_17", "#POSTGRESQL", "#SPRINGBOOT", "#API_SECURITY"].map(tag => (
+                    <span key={tag} className="font-sci text-xs tracking-widest text-[var(--primary-cyan)]">
+                        {tag}
+                    </span>
+                ))}
+            </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-12">
+            {[
+                "PYTHON_DATA", "SQL_MASTERY", "SPRING_BACKEND",
+                "DOCKER_NODES", "API_SECURITY", "LOGIC_PHILOSOPHY"
+            ].map(skill => (
+                <div key={skill} className="p-4 border border-white/10 rounded-xl text-center font-sci text-[10px] tracking-widest hover:border-cyan-500/50 hover:text-cyan-400 transition-all bg-white/5">
+                    {skill}
+                </div>
+            ))}
+        </div>
+    </section>
+);
 
 const ServiceCard = ({ service, onClick }: { service: Service, onClick: () => void }) => {
     const cardRef = useRef<HTMLDivElement>(null);
@@ -105,16 +158,16 @@ const IntelligentAutomationDetail = ({ onClose }: { onClose: () => void }) => {
             link: "https://github.com/FerdinandMileto/Enterprise_Data_Lab"
         },
         {
-            title: "Neural Scalping Engine: Eros Antigravity",
-            description: "Bot de trading algorítmico optimizado para micro-scalping con gestión de riesgo dinámica y protección de capital mediante Break-Even automático.",
-            tags: ["Python", "Aritificial Intelligence", "CCXT", "FinTech"],
-            link: "https://github.com/FerdinandMileto/Neural_Scalping_Engine_Eros_Antigravity-"
+            title: "Marketplace & E-commerce Intelligence",
+            description: "Plataforma avanzada de BI para analistas de e-commerce. Consolida KPIs multicanal (Amazon, ML, Shopify) con desgloses financieros de alta precisión.",
+            tags: ["Python", "Streamlit", "Financial Analytics", "Marketplace Intelligence"],
+            link: "https://github.com/FerdinandMileto/ECommerce_Marketing_Analytics"
         },
         {
-            title: "School Inventory Intelligence",
-            description: "Sistema de inteligencia logística para optimizar el abastecimiento escolar. Analiza consumo histórico y calcula presupuestos de recompra predictivos.",
-            tags: ["Python", "Streamlit", "Data Science", "Logistics"],
-            link: "https://github.com/FerdinandMileto/Sistema_Inventario_Escolar"
+            title: "Neural Scalping Engine: Eros Antigravity",
+            description: "Bot de trading algorítmico optimizado para micro-scalping con gestión de riesgo dinámica y protección de capital mediante Break-Even automático.",
+            tags: ["Python", "Artificial Intelligence", "CCXT", "FinTech"],
+            link: "https://github.com/FerdinandMileto/Neural_Scalping_Engine_Eros_Antigravity"
         }
     ];
 
@@ -255,6 +308,27 @@ const Web3BlockchainDetail = ({ onClose }: { onClose: () => void }) => {
 
 // --- DATA CORE DETAIL VIEW ---
 const DataCoreDetail = ({ onClose }: { onClose: () => void }) => {
+    const projects = [
+        {
+            title: "Marketplace & E-commerce Intelligence",
+            description: "Plataforma avanzada de BI para analistas de e-commerce. Consolida KPIs multicanal (Amazon, ML, Shopify) con desgloses financieros de alta precisión y visualización interactiva.",
+            tags: ["Python", "Streamlit", "Financial Analytics", "Marketplace Intelligence"],
+            link: "https://github.com/FerdinandMileto/ECommerce_Marketing_Analytics"
+        },
+        {
+            title: "Retail Intelligence System",
+            description: "Pipeline de ingeniería de datos (Kaggle) con limpieza automatizada, segmentación demográfica y generación de KPIs listos para BI corporativo.",
+            tags: ["Python", "Pandas", "Kaggle", "Data Engineering"],
+            link: "https://github.com/FerdinandMileto/Retail_Intelligence_System"
+        },
+        {
+            title: "School Inventory Intelligence",
+            description: "Sistema de inteligencia logística para optimizar el abastecimiento escolar. Analiza consumo histórico y calcula presupuestos de recompra predictivos.",
+            tags: ["Python", "Streamlit", "Data Science", "Logistics"],
+            link: "https://github.com/FerdinandMileto/Sistema_Inventario_Escolar"
+        }
+    ];
+
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -269,7 +343,51 @@ const DataCoreDetail = ({ onClose }: { onClose: () => void }) => {
                 >
                     <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
                 </button>
+
+                <h2 className="font-sci text-5xl md:text-7xl font-black mb-16 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-400 uppercase text-center">
+                    Data Core
+                </h2>
+
                 <StatsSection />
+
+                <div className="mt-20 grid grid-cols-1 gap-12">
+                    <h3 className="font-sci text-3xl font-bold text-white text-center uppercase tracking-widest mb-8">
+                        Core Projects
+                    </h3>
+                    {projects.map((project, i) => (
+                        <motion.div
+                            key={project.title}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.2 }}
+                            className="glassmorphism p-8 rounded-3xl border border-white/5 group relative"
+                        >
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                                <div className="max-w-2xl">
+                                    <h3 className="font-sci text-2xl font-bold text-white mb-4 group-hover:text-orange-400 transition-colors uppercase">
+                                        {project.title}
+                                    </h3>
+                                    <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                                        {project.description}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {project.tags.map(tag => (
+                                            <span key={tag} className="text-[10px] font-sci tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10 text-orange-400">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => window.open(project.link)}
+                                    className="px-8 py-4 bg-white/5 border border-white/10 rounded-full font-sci text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all uppercase whitespace-nowrap"
+                                >
+                                    Access Repository
+                                </button>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </motion.div>
     );
@@ -351,6 +469,81 @@ const ServiceSupportDetail = ({ onClose }: { onClose: () => void }) => {
     );
 };
 
+// --- ECOMMERCE INTELLIGENCE DETAIL VIEW ---
+const EcommerceDetail = ({ onClose }: { onClose: () => void }) => {
+    const projects = [
+        {
+            title: "Marketplace & E-commerce Intelligence",
+            description: "Plataforma avanzada de BI para analistas de e-commerce. Consolida KPIs multicanal (Amazon, ML, Shopify) con desgloses financieros de alta precisión.",
+            tags: ["Python", "Streamlit", "Financial Analytics", "Marketplace Intelligence"],
+            link: "https://github.com/FerdinandMileto/ECommerce_Marketing_Analytics"
+        },
+        {
+            title: "Retail Intelligence System",
+            description: "Pipeline de ingeniería de datos (Kaggle) con limpieza automatizada, segmentación demográfica y generación de KPIs listos para BI corporativo.",
+            tags: ["Python", "Pandas", "Kaggle", "Data Engineering"],
+            link: "https://github.com/FerdinandMileto/Retail_Intelligence_System"
+        }
+    ];
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed inset-0 z-[110] bg-[#030014] overflow-y-auto px-4 py-20"
+        >
+            <div className="max-w-6xl mx-auto">
+                <button
+                    onClick={onClose}
+                    className="fixed top-10 right-10 z-[120] bg-white/5 border border-white/10 p-4 rounded-full hover:bg-white/10 transition-colors group"
+                >
+                    <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
+                </button>
+
+                <h2 className="font-sci text-5xl md:text-7xl font-black mb-16 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500 uppercase text-center">
+                    Ecommerce Intelligence
+                </h2>
+
+                <div className="grid grid-cols-1 gap-12">
+                    {projects.map((project, i) => (
+                        <motion.div
+                            key={project.title}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.2 }}
+                            className="glassmorphism p-8 rounded-3xl border border-white/5 group relative"
+                        >
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                                <div className="max-w-2xl">
+                                    <h3 className="font-sci text-2xl font-bold text-white mb-4 group-hover:text-emerald-400 transition-colors uppercase">
+                                        {project.title}
+                                    </h3>
+                                    <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                                        {project.description}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {project.tags.map(tag => (
+                                            <span key={tag} className="text-[10px] font-sci tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10 text-emerald-400">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => window.open(project.link)}
+                                    className="px-8 py-4 bg-white/5 border border-white/10 rounded-full font-sci text-xs tracking-widest hover:bg-emerald-500 hover:text-white transition-all uppercase whitespace-nowrap"
+                                >
+                                    Access Repository
+                                </button>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </motion.div>
+    );
+};
 const GenericDetail = ({ title, onClose }: { title: string, onClose: () => void }) => {
     return (
         <motion.div
@@ -482,6 +675,7 @@ export default function App() {
 
     return (
         <div className="relative min-h-screen bg-[#030014]">
+            <DaemonLogo />
             <AnimatePresence>
                 {selectedDirective === "Data Core" ? (
                     <DataCoreDetail onClose={() => setSelectedDirective(null)} />
@@ -491,6 +685,8 @@ export default function App() {
                     <ServiceSupportDetail onClose={() => setSelectedDirective(null)} />
                 ) : selectedDirective === "Web 3 & Blockchain" ? (
                     <Web3BlockchainDetail onClose={() => setSelectedDirective(null)} />
+                ) : selectedDirective === "Ecommerce Intelligence" ? (
+                    <EcommerceDetail onClose={() => setSelectedDirective(null)} />
                 ) : selectedDirective && (
                     <GenericDetail title={selectedDirective} onClose={() => setSelectedDirective(null)} />
                 )}
@@ -506,6 +702,13 @@ export default function App() {
                 {/* HERO SECTION - MANTAINED AS PILLAR */}
                 <section ref={heroRef} className="relative min-h-[250vh] flex flex-col items-center pt-[10vh] px-4 overflow-x-hidden">
                     <motion.div style={{ y, opacity }} className="w-full max-w-6xl mx-auto flex flex-col items-center">
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="font-sci text-[var(--accent-orange)] text-[10px] tracking-[8px] mb-8 uppercase"
+                        >
+                            CONCIENCIA & CÓDIGO // HYBRID EVOLUTION
+                        </motion.p>
 
                         {/* 1. DAEMON TECH TITLE */}
                         <motion.div
@@ -616,6 +819,8 @@ export default function App() {
                     </motion.div>
                 </section>
 
+                <FeaturedSystem />
+
                 {/* SERVICES SECTION - CORE DIRECTIVES */}
                 <section id="services" className="py-32 lg:py-48 px-4 bg-[#030014]">
                     <div className="max-w-6xl mx-auto text-center">
@@ -654,8 +859,8 @@ export default function App() {
 
                 {/* Footer */}
                 <footer className="text-center py-20 px-4 border-t border-white/5 bg-[#030014]">
-                    <p className="text-gray-600 font-mono text-xs tracking-[0.3em] uppercase">
-                        &copy; 2025 FERNANDO BERUMEN. Hybrid Entity Sincronized.
+                    <p style={{ padding: '80px 20px', textAlign: 'center', fontSize: '10px', color: '#444', fontFamily: 'JetBrains Mono', letterSpacing: '4px' }}>
+                        &copy; 2025 HYBRID EVOLUTION | DAEMON TECH SYSTEM | DEVELOPED BY FERNANDO BERUMEN
                     </p>
                 </footer>
             </main>
