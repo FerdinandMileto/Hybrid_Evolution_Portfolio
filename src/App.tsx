@@ -43,8 +43,8 @@ const SERVICES = [
         icon: Webhook,
         color: "text-cyan-400",
         githubProjects: [
-            { name: "Veritas-Ledger-Protocol", url: "https://github.com/ferdinandmiletori/Veritas-Ledger-Protocol", desc: "Protocolo de gobernanza DAO segura." },
-            { name: "Solana-Alpha-Prime", url: "https://github.com/ferdinandmiletori/solana-alpha-prime", desc: "Infraestructura RPC Enterprise." }
+            { name: "Veritas-Ledger-Protocol", url: "https://github.com/FerdinandMileto/Solana_Node_Prime", desc: "Protocolo de gobernanza DAO segura." },
+            { name: "Solana-Alpha-Prime", url: "https://github.com/FerdinandMileto/Solana_Node_Prime", desc: "Infraestructura RPC Enterprise." }
         ]
     },
     {
@@ -56,8 +56,8 @@ const SERVICES = [
         icon: Database,
         color: "text-orange-400",
         githubProjects: [
-            { name: "Marketplace-Intelligence-System", url: "https://github.com/ferdinandmiletori/Marketplace-Intelligence-System", desc: "ETL robusto para inteligencia de mercado." },
-            { name: "Predictive-Pricing-Engine", url: "https://github.com/ferdinandmiletori/Predictive-Pricing-Engine", desc: "Análisis predictivo de precios en tiempo real." }
+            { name: "Marketplace-Intelligence-System", url: "https://github.com/FerdinandMileto/Marketplace-Intelligence-System", desc: "ETL robusto para inteligencia de mercado." },
+            { name: "Predictive-Pricing-Engine", url: "https://github.com/FerdinandMileto/Predictive-Pricing-Engine", desc: "Análisis predictivo de precios en tiempo real." }
         ]
     },
     {
@@ -69,8 +69,8 @@ const SERVICES = [
         icon: ShieldAlert,
         color: "text-red-400",
         githubProjects: [
-            { name: "APIGuard-Sentinel", url: "https://github.com/ferdinandmiletori/APIGuard-Sentinel", desc: "Sistema de monitoreo de APIs Proactivo." },
-            { name: "Enterprise-Payload-Mesh", url: "https://github.com/ferdinandmiletori/Enterprise-Payload-Mesh", desc: "Malla de integración robusta." }
+            { name: "APIGuard-System", url: "https://github.com/FerdinandMileto/API_Guard_System", desc: "Sistema de soporte técnico proactivo y monitoreo de APIs." },
+            { name: "Enterprise-Payload-Mesh", url: "https://github.com/FerdinandMileto/API_Guard_System", desc: "Malla de integración robusta y diagnóstico automatizado." }
         ]
     }
 ];
