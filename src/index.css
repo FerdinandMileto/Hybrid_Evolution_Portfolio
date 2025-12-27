@@ -3,62 +3,95 @@
 @import "tailwindcss/utilities";
 
 :root {
-  --bg-color: #030014;
+  --bg-color: #000000;
   --primary-cyan: #00f2ff;
   --accent-orange: #ff8c00;
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --text-main: #e0e0e0;
-  --primary-glow: rgba(0, 242, 255, 0.4);
-  --secondary-glow: rgba(168, 85, 247, 0.4);
+  --neon-blue: #00e5ff;
 }
 
 @layer base {
   body {
-    @apply bg-[#030014] text-white min-h-screen overflow-x-hidden font-body;
-    background-image:
-      radial-gradient(circle at 50% 10%, #1e0b45 0%, transparent 50%),
-      radial-gradient(circle at 80% 90%, #063047 0%, transparent 50%);
+    @apply bg-black text-white min-h-screen overflow-x-hidden font-sans scroll-smooth;
+    background-image: radial-gradient(circle at 50% 50%, #050510 0%, #000000 100%);
   }
 }
 
 @layer components {
-  .glassmorphism {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 transition-all duration-500;
+  .cyber-neon {
+    color: var(--neon-blue);
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.7), 0 0 20px rgba(0, 229, 255, 0.3);
+    @apply uppercase tracking-[4px] font-black;
   }
 
-  .daemon-symbol {
-    @apply w-10 h-10 border-2 border-[var(--primary-cyan)] flex items-center justify-center font-mono font-bold text-[var(--primary-cyan)];
-    border-radius: 50% 0 50% 0;
-    box-shadow: 0 0 15px var(--primary-cyan);
+  .nav-card {
+    @apply bg-white/[0.01] border border-white/10 p-10 rounded-[2.5rem] transition-all duration-500 cursor-pointer relative overflow-hidden;
+    backdrop-filter: blur(20px);
   }
 
-  .badge-active::after {
-    content: "DAEMON_PROCESS_ACTIVE";
-    @apply absolute top-3 right-5 font-mono text-[10px] text-[var(--primary-cyan)] opacity-50 tracking-tighter;
+  .nav-card:hover {
+    @apply border-cyan-500/50 bg-white/[0.04];
+    box-shadow: 0 0 50px rgba(0, 242, 255, 0.1), inset 0 0 15px rgba(0, 242, 255, 0.05);
+  }
+
+  .glass-label {
+    @apply text-xs font-mono tracking-[0.4em] text-orange-500 uppercase font-black mb-2 flex items-center gap-2;
+  }
+
+  .glass-value {
+    @apply text-white font-medium tracking-wide leading-relaxed;
   }
 }
 
-.gradient-text-live {
-  background-size: 200% auto;
-  animation: shine 5s linear infinite;
+.sacred-glow {
+  filter: drop-shadow(0 0 40px rgba(0, 242, 255, 0.5));
 }
 
-@keyframes shine {
-  to {
-    background-position: 200% center;
+.particle-grid {
+  background-image: radial-gradient(var(--primary-cyan) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  border-radius: 50%;
+  position: absolute;
+  inset: 0;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 85%);
+  -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 85%);
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 1);
+}
+
+.energy-emanate {
+  animation: emanate 4s infinite ease-in-out;
+}
+
+@keyframes emanate {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.6;
+  }
+}
+
+.animate-float {
+  animation: float 6s infinite ease-in-out;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
   }
 }
 
 ::-webkit-scrollbar {
-  width: 4px;
-}
-
-::-webkit-scrollbar-track {
-  background: #030014;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, transparent, var(--primary-cyan), transparent);
-  border-radius: 10px;
+  display: none;
 }

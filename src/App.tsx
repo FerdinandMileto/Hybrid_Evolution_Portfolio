@@ -1,882 +1,247 @@
-import { useState, useEffect, useRef } from 'react';
-import { InteractiveTerminal } from './components/InteractiveTerminal';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Mail,
-    Linkedin,
-    Github,
-    MessageSquare,
-    ArrowDown,
     Cpu,
-    Database,
     Webhook,
+    Database,
     ShieldAlert,
+    BarChart3,
+    Activity,
+    Layers,
+    Monitor,
     X,
-    MessageCircle,
-    TrendingUp
+    ExternalLink,
+    Code2
 } from 'lucide-react';
-import { StatsSection } from './components/StatsSection';
+import { AreaChart, Area, ResponsiveContainer } from 'recharts';
+import { InteractiveTerminal } from './components/InteractiveTerminal';
 
-// --- TYPES ---
-interface Service {
-    title: string;
-    description: string;
-    icon: React.ElementType;
-    color: string;
-}
+const chartData = [
+    { v: 30 }, { v: 45 }, { v: 35 }, { v: 60 }, { v: 50 }, { v: 80 }, { v: 65 }
+];
 
-// --- DATA ---
-const SERVICES: Service[] = [
+const SERVICES = [
     {
+        id: "automation",
         title: "Intelligent Automation",
-        description: "Desarrollo de ecosistemas autónomos, pipelines de datos resilientes y algoritmos de trading (Eros) con gestión de riesgo integrada.",
+        description: "Pipelines de datos resilientes & Ecosistemas autónomos.",
+        tech: "Python, Docker, AWS Lambda, Apache Airflow",
+        target: "Multinacionales, Centros Logísticos",
         icon: Cpu,
-        color: "from-purple-400 to-pink-500"
+        color: "text-purple-400",
+        githubProjects: [
+            { name: "Neural-Auto-Bots", url: "https://github.com/ferdinandmiletori/Neural-Auto-Bots", desc: "Bots autónomos para optimización de procesos." },
+            { name: "ETL-Resilient-Core", url: "https://github.com/ferdinandmiletori/ETL-Resilient-Core", desc: "Pipeline de datos con auto-recuperación." }
+        ]
     },
     {
+        id: "web3",
         title: "Web 3 & Blockchain",
-        description: "Arquitectura de soluciones descentralizadas, smart contracts y estrategias de tokenomics (BioTrace & Veritas).",
+        description: "Protocolos descentralizados & Smart Contracts de alta seguridad.",
+        tech: "Solidity, Rust, Go, Hardhat, IPFS",
+        target: "Startups DeFi, Sector Gubernamental",
         icon: Webhook,
-        color: "from-cyan-400 to-blue-500"
+        color: "text-cyan-400",
+        githubProjects: [
+            { name: "Veritas-Ledger-Protocol", url: "https://github.com/ferdinandmiletori/Veritas-Ledger-Protocol", desc: "Protocolo de gobernanza DAO segura." },
+            { name: "Solana-Alpha-Prime", url: "https://github.com/ferdinandmiletori/solana-alpha-prime", desc: "Infraestructura RPC Enterprise." }
+        ]
     },
     {
+        id: "data",
         title: "Data Core",
-        description: "Hub central de inteligencia empresarial, especializado en Marketplace Analytics, Retail Systems y análisis de inventario predictivo.",
+        description: "Análisis predictivo y hubs de inteligencia de mercado.",
+        tech: "SQL, Python, BigQuery, Tableau, Scikit-learn",
+        target: "Retail, E-commerce Leaders",
         icon: Database,
-        color: "from-pink-500 to-orange-400"
+        color: "text-orange-400",
+        githubProjects: [
+            { name: "Marketplace-Intelligence-System", url: "https://github.com/ferdinandmiletori/Marketplace-Intelligence-System", desc: "ETL robusto para inteligencia de mercado." },
+            { name: "Predictive-Pricing-Engine", url: "https://github.com/ferdinandmiletori/Predictive-Pricing-Engine", desc: "Análisis predictivo de precios en tiempo real." }
+        ]
     },
     {
-        title: "Ecommerce Intelligence",
-        description: "Análisis estratégico y automatización para Amazon, ML y Shopify. Especializado en Unit Economics y optimización de rentabilidad multicanal.",
-        icon: TrendingUp,
-        color: "from-green-400 to-emerald-600"
-    },
-    {
+        id: "api",
         title: "Service Support & API",
-        description: "Arquitectura de soporte proactivo, integración de servicios web (REST/SOAP) y automatización de diagnósticos técnicos.",
+        description: "Arquitectura proactiva e integraciones Enterprise robustas.",
+        tech: "Java 21, Spring Boot, Kubernetes, gRPC",
+        target: "Fintech, SaaS Enterprise",
         icon: ShieldAlert,
-        color: "from-red-500 to-purple-600"
+        color: "text-red-400",
+        githubProjects: [
+            { name: "APIGuard-Sentinel", url: "https://github.com/ferdinandmiletori/APIGuard-Sentinel", desc: "Sistema de monitoreo de APIs Proactivo." },
+            { name: "Enterprise-Payload-Mesh", url: "https://github.com/ferdinandmiletori/Enterprise-Payload-Mesh", desc: "Malla de integración robusta." }
+        ]
     }
 ];
 
-// --- NEW COMPONENTS (HYBRID LAYER) ---
-
-const DaemonLogo = () => (
-    <div className="fixed top-8 left-8 z-[150] flex items-center gap-3 group">
-        <div className="daemon-symbol group-hover:scale-110 transition-transform">DT</div>
-        <span className="font-sci text-[10px] tracking-[4px] text-white/50 group-hover:text-cyan-400 transition-colors uppercase">DAEMON TECH</span>
-    </div>
-);
-
-const FeaturedSystem = () => (
-    <section className="section-container max-w-6xl mx-auto px-4 py-32">
-        <h2 className="font-sci text-[var(--accent-orange)] text-sm tracking-[6px] mb-12 uppercase">
-            [ FEATURED_SYSTEMS ]
-        </h2>
-
-        <div className="glassmorphism rounded-[30px] p-12 border border-white/5 relative overflow-hidden group badge-active">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-            <h3 className="font-sci text-5xl md:text-7xl font-black mb-6 text-white uppercase italic">
-                APIGuard
-            </h3>
-
-            <p className="text-gray-400 text-xl leading-relaxed max-w-3xl mb-12">
-                La unión entre la vigilancia constante y la integridad de datos. APIGuard es un centinela para arquitecturas SOAP/REST, diseñado para predecir fallos y asegurar la continuidad del flujo de información.
-            </p>
-
-            <div className="flex flex-wrap gap-4">
-                {["#JAVA_17", "#POSTGRESQL", "#SPRINGBOOT", "#API_SECURITY"].map(tag => (
-                    <span key={tag} className="font-sci text-xs tracking-widest text-[var(--primary-cyan)]">
-                        {tag}
-                    </span>
-                ))}
-            </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-12">
-            {[
-                "PYTHON_DATA", "SQL_MASTERY", "SPRING_BACKEND",
-                "DOCKER_NODES", "API_SECURITY", "LOGIC_PHILOSOPHY"
-            ].map(skill => (
-                <div key={skill} className="p-4 border border-white/10 rounded-xl text-center font-sci text-[10px] tracking-widest hover:border-cyan-500/50 hover:text-cyan-400 transition-all bg-white/5">
-                    {skill}
-                </div>
-            ))}
-        </div>
-    </section>
-);
-
-const ServiceCard = ({ service, onClick }: { service: Service, onClick: () => void }) => {
-    const cardRef = useRef<HTMLDivElement>(null);
-    const [rotateX, setRotateX] = useState(0);
-    const [rotateY, setRotateY] = useState(0);
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!cardRef.current) return;
-        const rect = cardRef.current.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2) * 8;
-        const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2) * -8;
-        setRotateX(y);
-        setRotateY(x);
-    };
-
-    const handleMouseLeave = () => {
-        setRotateX(0);
-        setRotateY(0);
-    };
+export default function App() {
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+    const activeService = SERVICES.find(s => s.id === selectedId);
 
     return (
-        <motion.div
-            ref={cardRef}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            onClick={onClick}
-            animate={{ rotateX, rotateY, scale: rotateX !== 0 ? 1.02 : 1 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="service-card glassmorphism rounded-3xl p-10 border border-white/5 hover:border-purple-500/30 cursor-pointer group relative overflow-hidden"
-        >
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <service.icon className={`w-12 h-12 mb-6 text-transparent bg-clip-text bg-gradient-to-r ${service.color} relative z-10`} />
-            <h3 className={`font-sci text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r ${service.color} uppercase tracking-wider relative z-10`}>
-                {service.title}
-            </h3>
-            <p className="text-gray-400 leading-relaxed text-lg relative z-10">
-                {service.description}
-            </p>
-        </motion.div>
-    );
-};
+        <div className="min-h-screen w-full bg-black text-white selection:bg-cyan-500/30 font-sans p-8 md:p-16">
 
-// --- INTELLIGENT AUTOMATION DETAIL VIEW ---
-const IntelligentAutomationDetail = ({ onClose }: { onClose: () => void }) => {
-    const projects = [
-        {
-            title: "Enterprise Data Pipeline & Quality Shield",
-            description: "Arquitectura de orquestación resiliente (estilo Airflow) con validación automática de integridad y detección de anomalías estadísticas (Data Drift).",
-            tags: ["Python", "Pandas", "AWS Redshift", "ETL", "Quality Monitoring"],
-            link: "https://github.com/FerdinandMileto/Enterprise_Data_Lab"
-        },
-        {
-            title: "Marketplace & E-commerce Intelligence",
-            description: "Plataforma avanzada de BI para analistas de e-commerce. Consolida KPIs multicanal (Amazon, ML, Shopify) con desgloses financieros de alta precisión.",
-            tags: ["Python", "Streamlit", "Financial Analytics", "Marketplace Intelligence"],
-            link: "https://github.com/FerdinandMileto/ECommerce_Marketing_Analytics"
-        },
-        {
-            title: "Neural Scalping Engine: Eros Antigravity",
-            description: "Bot de trading algorítmico optimizado para micro-scalping con gestión de riesgo dinámica y protección de capital mediante Break-Even automático.",
-            tags: ["Python", "Artificial Intelligence", "CCXT", "FinTech"],
-            link: "https://github.com/FerdinandMileto/Neural_Scalping_Engine_Eros_Antigravity"
-        }
-    ];
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed inset-0 z-[110] bg-[#030014] overflow-y-auto px-4 py-20"
-        >
-            <div className="max-w-6xl mx-auto">
-                <button
-                    onClick={onClose}
-                    className="fixed top-10 right-10 z-[120] bg-white/5 border border-white/10 p-4 rounded-full hover:bg-white/10 transition-colors group"
-                >
-                    <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
-                </button>
-
-                <h2 className="font-sci text-5xl md:text-7xl font-black mb-16 text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500 uppercase text-center">
-                    Intelligent Automation
-                </h2>
-
-                <div className="grid grid-cols-1 gap-12">
-                    {projects.map((project, i) => (
-                        <motion.div
-                            key={project.title}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.2 }}
-                            className="glassmorphism p-8 rounded-3xl border border-white/5 group relative"
-                        >
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                                <div className="max-w-2xl">
-                                    <h3 className="font-sci text-2xl font-bold text-white mb-4 group-hover:text-cyan-400 transition-colors uppercase">
-                                        {project.title}
-                                    </h3>
-                                    <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                                        {project.description}
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.tags.map(tag => (
-                                            <span key={tag} className="text-[10px] font-sci tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10 text-cyan-400">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => window.open(project.link)}
-                                    className="px-8 py-4 bg-white/5 border border-white/10 rounded-full font-sci text-xs tracking-widest hover:bg-purple-500 hover:text-white transition-all uppercase whitespace-nowrap"
-                                >
-                                    Access Repository
-                                </button>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </motion.div>
-    );
-};
-
-// --- WEB3 & BLOCKCHAIN DETAIL VIEW ---
-const Web3BlockchainDetail = ({ onClose }: { onClose: () => void }) => {
-    const projects = [
-        {
-            title: "Veritas Protocol: Academic Integrity",
-            description: "Protocolo de Smart Contracts diseñado para erradicar la falsificación de títulos académicos mediante credenciales digitales inmutables en la blockchain.",
-            tags: ["Solidity", "Ethereum", "Smart Contracts", "Web3"],
-            link: "https://github.com/FerdinandMileto/Veritas-Blockchain-Certification"
-        },
-        {
-            title: "BioTrace: Animal Welfare Sovereign Identity",
-            description: "Infraestructura de Identidad Soberana para el Bienestar Animal. Garantiza la trazabilidad absoluta de historiales médicos y donaciones desde el rescate hasta la adopción mediante Blockchain.",
-            tags: ["Solidity", "Sovereign Identity", "Social Impact", "Traceability"],
-            link: "https://github.com/FerdinandMileto/BioTrace-Animal-Welfare"
-        }
-    ];
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 50 }}
-            className="fixed inset-0 z-[110] bg-[#030014] overflow-y-auto px-4 py-20"
-        >
-            <div className="max-w-6xl mx-auto">
-                <button
-                    onClick={onClose}
-                    className="fixed top-10 right-10 z-[120] bg-white/5 border border-white/10 p-4 rounded-full hover:bg-white/10 transition-colors group"
-                >
-                    <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
-                </button>
-
-                <h2 className="font-sci text-5xl md:text-7xl font-black mb-16 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 uppercase text-center">
-                    Web 3 & Blockchain
-                </h2>
-
-                <div className="grid grid-cols-1 gap-12">
-                    {projects.map((project, i) => (
-                        <motion.div
-                            key={project.title}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: i * 0.2 }}
-                            className="glassmorphism p-8 rounded-3xl border border-white/5 group relative"
-                        >
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                                <div className="max-w-2xl">
-                                    <h3 className="font-sci text-2xl font-bold text-white mb-4 group-hover:text-cyan-400 transition-colors uppercase">
-                                        {project.title}
-                                    </h3>
-                                    <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                                        {project.description}
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.tags.map(tag => (
-                                            <span key={tag} className="text-[10px] font-sci tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10 text-cyan-400">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => window.open(project.link)}
-                                    className="px-8 py-4 bg-white/5 border border-white/10 rounded-full font-sci text-xs tracking-widest hover:bg-cyan-500 hover:text-white transition-all uppercase whitespace-nowrap"
-                                >
-                                    Verify Ledger
-                                </button>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </motion.div>
-    );
-};
-
-// --- DATA CORE DETAIL VIEW ---
-const DataCoreDetail = ({ onClose }: { onClose: () => void }) => {
-    const projects = [
-        {
-            title: "Marketplace & E-commerce Intelligence",
-            description: "Plataforma avanzada de BI para analistas de e-commerce. Consolida KPIs multicanal (Amazon, ML, Shopify) con desgloses financieros de alta precisión y visualización interactiva.",
-            tags: ["Python", "Streamlit", "Financial Analytics", "Marketplace Intelligence"],
-            link: "https://github.com/FerdinandMileto/ECommerce_Marketing_Analytics"
-        },
-        {
-            title: "Retail Intelligence System",
-            description: "Pipeline de ingeniería de datos (Kaggle) con limpieza automatizada, segmentación demográfica y generación de KPIs listos para BI corporativo.",
-            tags: ["Python", "Pandas", "Kaggle", "Data Engineering"],
-            link: "https://github.com/FerdinandMileto/Retail_Intelligence_System"
-        },
-        {
-            title: "School Inventory Intelligence",
-            description: "Sistema de inteligencia logística para optimizar el abastecimiento escolar. Analiza consumo histórico y calcula presupuestos de recompra predictivos.",
-            tags: ["Python", "Streamlit", "Data Science", "Logistics"],
-            link: "https://github.com/FerdinandMileto/Sistema_Inventario_Escolar"
-        }
-    ];
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-[110] bg-[#030014] overflow-y-auto px-4 py-20"
-        >
-            <div className="max-w-6xl mx-auto">
-                <button
-                    onClick={onClose}
-                    className="fixed top-10 right-10 z-[120] bg-white/5 border border-white/10 p-4 rounded-full hover:bg-white/10 transition-colors group"
-                >
-                    <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
-                </button>
-
-                <h2 className="font-sci text-5xl md:text-7xl font-black mb-16 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-400 uppercase text-center">
-                    Data Core
-                </h2>
-
-                <StatsSection />
-
-                <div className="mt-20 grid grid-cols-1 gap-12">
-                    <h3 className="font-sci text-3xl font-bold text-white text-center uppercase tracking-widest mb-8">
-                        Core Projects
-                    </h3>
-                    {projects.map((project, i) => (
-                        <motion.div
-                            key={project.title}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.2 }}
-                            className="glassmorphism p-8 rounded-3xl border border-white/5 group relative"
-                        >
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                                <div className="max-w-2xl">
-                                    <h3 className="font-sci text-2xl font-bold text-white mb-4 group-hover:text-orange-400 transition-colors uppercase">
-                                        {project.title}
-                                    </h3>
-                                    <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                                        {project.description}
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.tags.map(tag => (
-                                            <span key={tag} className="text-[10px] font-sci tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10 text-orange-400">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => window.open(project.link)}
-                                    className="px-8 py-4 bg-white/5 border border-white/10 rounded-full font-sci text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all uppercase whitespace-nowrap"
-                                >
-                                    Access Repository
-                                </button>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </motion.div>
-    );
-};
-
-// --- SERVICE SUPPORT & API DETAIL VIEW ---
-const ServiceSupportDetail = ({ onClose }: { onClose: () => void }) => {
-    const projects = [
-        {
-            title: "API Troubleshooting & Support Toolkit",
-            description: "Herramienta de diagnóstico para la resolución de errores de integración (Auth, Payload, Latencia) y aseguramiento de consumo eficiente de servicios.",
-            tags: ["Python", "REST/SOAP", "API Diagnostics", "Technical Support"],
-            link: "https://github.com/FerdinandMileto/Support_Engineering_Lab"
-        },
-        {
-            title: "Self-Service Integration Architecture",
-            description: "Diseño de marcos de documentación técnica escalable y guías de autogestión que reducen un 40% el volumen de tickets innecesarios.",
-            tags: ["Technical Writing", "Documentation", "Git", "Cultura de Servicio"],
-            link: "https://github.com/FerdinandMileto/Support_Engineering_Lab"
-        }
-    ];
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed inset-0 z-[110] bg-[#030014] overflow-y-auto px-4 py-20"
-        >
-            <div className="max-w-6xl mx-auto">
-                <button
-                    onClick={onClose}
-                    className="fixed top-10 right-10 z-[120] bg-white/5 border border-white/10 p-4 rounded-full hover:bg-white/10 transition-colors group"
-                >
-                    <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
-                </button>
-
-                <h2 className="font-sci text-5xl md:text-7xl font-black mb-16 text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-purple-500 uppercase text-center">
-                    Service Support & API
-                </h2>
-
-                <div className="grid grid-cols-1 gap-12">
-                    {projects.map((project, i) => (
-                        <motion.div
-                            key={project.title}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.2 }}
-                            className="glassmorphism p-8 rounded-3xl border border-white/5 group relative"
-                        >
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                                <div className="max-w-2xl">
-                                    <h3 className="font-sci text-2xl font-bold text-white mb-4 group-hover:text-red-400 transition-colors uppercase">
-                                        {project.title}
-                                    </h3>
-                                    <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                                        {project.description}
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.tags.map(tag => (
-                                            <span key={tag} className="text-[10px] font-sci tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10 text-red-400">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => window.open(project.link)}
-                                    className="px-8 py-4 bg-white/5 border border-white/10 rounded-full font-sci text-xs tracking-widest hover:bg-red-500 hover:text-white transition-all uppercase whitespace-nowrap"
-                                >
-                                    View Protocol
-                                </button>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </motion.div>
-    );
-};
-
-// --- ECOMMERCE INTELLIGENCE DETAIL VIEW ---
-const EcommerceDetail = ({ onClose }: { onClose: () => void }) => {
-    const projects = [
-        {
-            title: "Marketplace & E-commerce Intelligence",
-            description: "Plataforma avanzada de BI para analistas de e-commerce. Consolida KPIs multicanal (Amazon, ML, Shopify) con desgloses financieros de alta precisión.",
-            tags: ["Python", "Streamlit", "Financial Analytics", "Marketplace Intelligence"],
-            link: "https://github.com/FerdinandMileto/ECommerce_Marketing_Analytics"
-        },
-        {
-            title: "Retail Intelligence System",
-            description: "Pipeline de ingeniería de datos (Kaggle) con limpieza automatizada, segmentación demográfica y generación de KPIs listos para BI corporativo.",
-            tags: ["Python", "Pandas", "Kaggle", "Data Engineering"],
-            link: "https://github.com/FerdinandMileto/Retail_Intelligence_System"
-        }
-    ];
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed inset-0 z-[110] bg-[#030014] overflow-y-auto px-4 py-20"
-        >
-            <div className="max-w-6xl mx-auto">
-                <button
-                    onClick={onClose}
-                    className="fixed top-10 right-10 z-[120] bg-white/5 border border-white/10 p-4 rounded-full hover:bg-white/10 transition-colors group"
-                >
-                    <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
-                </button>
-
-                <h2 className="font-sci text-5xl md:text-7xl font-black mb-16 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500 uppercase text-center">
-                    Ecommerce Intelligence
-                </h2>
-
-                <div className="grid grid-cols-1 gap-12">
-                    {projects.map((project, i) => (
-                        <motion.div
-                            key={project.title}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.2 }}
-                            className="glassmorphism p-8 rounded-3xl border border-white/5 group relative"
-                        >
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                                <div className="max-w-2xl">
-                                    <h3 className="font-sci text-2xl font-bold text-white mb-4 group-hover:text-emerald-400 transition-colors uppercase">
-                                        {project.title}
-                                    </h3>
-                                    <p className="text-gray-400 text-lg leading-relaxed mb-6">
-                                        {project.description}
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.tags.map(tag => (
-                                            <span key={tag} className="text-[10px] font-sci tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10 text-emerald-400">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => window.open(project.link)}
-                                    className="px-8 py-4 bg-white/5 border border-white/10 rounded-full font-sci text-xs tracking-widest hover:bg-emerald-500 hover:text-white transition-all uppercase whitespace-nowrap"
-                                >
-                                    Access Repository
-                                </button>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </motion.div>
-    );
-};
-const GenericDetail = ({ title, onClose }: { title: string, onClose: () => void }) => {
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            className="fixed inset-0 z-[110] bg-[#030014] overflow-y-auto px-4 py-20 flex items-center justify-center"
-        >
-            <div className="max-w-4xl mx-auto text-center">
-                <button
-                    onClick={onClose}
-                    className="fixed top-10 right-10 z-[120] bg-white/5 border border-white/10 p-4 rounded-full hover:bg-white/10 transition-colors group"
-                >
-                    <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform" />
-                </button>
-                <h2 className="font-sci text-5xl md:text-7xl font-black mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500 uppercase">
-                    {title}
-                </h2>
-                <p className="text-gray-400 text-xl font-body max-w-2xl mx-auto">
-                    Node expansion in progress. Accessing encrypted data packets for this directive...
-                </p>
-                <div className="mt-12 w-20 h-20 border-i-2 border-purple-500 border-t-2 rounded-full animate-spin mx-auto opacity-20" />
-            </div>
-        </motion.div>
-    );
-};
-
-const ContactPortal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
-    const [status, setStatus] = useState("ESTABLISHED");
-
-    const nodes = [
-        { icon: Mail, label: "Email", action: () => copyEmail(), color: "hover:text-cyan-400" },
-        { icon: MessageCircle, label: "WhatsApp", action: () => window.open("https://wa.me/524428979803"), color: "hover:text-green-400" },
-        { icon: MessageSquare, label: "Telegram", action: () => window.open("https://t.me/ferdinanddmileto"), color: "hover:text-blue-400" },
-        { icon: Linkedin, label: "LinkedIn", action: () => window.open("https://linkedin.com/in/fernandoberumen"), color: "hover:text-blue-600" },
-        { icon: Github, label: "GitHub", action: () => window.open("https://github.com/FerdinandMileto"), color: "hover:text-white" },
-        { icon: ShieldAlert, label: "Discord", action: () => window.open("https://discord.com/users/ferdinandmileto"), color: "hover:text-indigo-400" },
-    ];
-
-    const copyEmail = () => {
-        const email = 'ferdinand.daemontech@proton.me';
-        navigator.clipboard.writeText(email).then(() => {
-            setStatus("COPIED TO CLIPBOARD");
-            setTimeout(() => {
-                window.location.href = `mailto:${email}`;
-            }, 800);
-            setTimeout(() => setStatus("ESTABLISHED"), 3000);
-        });
-    };
-
-    return (
-        <AnimatePresence>
-            {isOpen && (
+            {/* --- HERO SECTION --- */}
+            <section className="flex flex-col lg:flex-row items-center justify-between gap-12 mb-32 min-h-[85vh] relative z-20">
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[100] bg-[#030014]/95 backdrop-blur-[25px] flex items-center justify-center"
+                    initial={{ opacity: 0, x: -150 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="flex-1 space-y-10"
                 >
-                    <button
-                        onClick={onClose}
-                        className="absolute top-10 right-10 font-sci text-sm tracking-widest opacity-50 hover:opacity-100 uppercase py-2 px-4 border border-white/10 rounded-full flex items-center gap-2 group transition-all"
-                    >
-                        Close <X className="w-4 h-4 group-hover:rotate-90 transition-transform" />
-                    </button>
-
-                    <div className="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px] flex items-center justify-center">
-                        <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                            className="absolute inset-0 border-2 border-dashed border-purple-500/30 rounded-full"
-                        />
-
-                        {nodes.map((node, i) => {
-                            const angle = (i * (360 / nodes.length)) * (Math.PI / 180);
-                            const radius = typeof window !== 'undefined' && window.innerWidth < 768 ? 120 : 200;
-                            const x = Math.cos(angle) * radius;
-                            const y = Math.sin(angle) * radius;
-
-                            return (
-                                <motion.div
-                                    key={node.label}
-                                    initial={{ scale: 0, x: 0, y: 0 }}
-                                    animate={{ scale: 1, x, y }}
-                                    whileHover={{ scale: 1.2 }}
-                                    onClick={node.action}
-                                    className={`absolute w-16 h-16 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-full flex flex-col items-center justify-center cursor-pointer transition-all ${node.color} group z-10`}
-                                >
-                                    <node.icon className="w-6 h-6 md:w-8 md:h-8 mb-1" />
-                                    <span className="text-[8px] md:text-[10px] items-center uppercase font-sci tracking-tighter opacity-0 group-hover:opacity-100 absolute -bottom-6 whitespace-nowrap">
-                                        {node.label}
-                                    </span>
-                                </motion.div>
-                            );
-                        })}
-
-                        <div className="z-20 p-8 glassmorphism rounded-full w-40 h-40 md:w-48 md:h-48 flex flex-col justify-center items-center border border-purple-500/20 text-center">
-                            <span className="font-sci text-[8px] md:text-[10px] tracking-[0.3em] opacity-40 mb-2">DAEMON LINK</span>
-                            <span className={`font-sci text-[10px] md:text-xs font-bold transition-all duration-300 ${status === 'ESTABLISHED' ? 'text-cyan-400' : 'text-green-400 animate-pulse'}`}>
-                                {status}
-                            </span>
-                        </div>
+                    <h1 className="text-[8rem] md:text-[14rem] lg:text-[18rem] font-black tracking-tighter leading-[0.7] mb-12">
+                        Fernando <br /> Berumen
+                    </h1>
+                    <div className="flex items-center gap-10">
+                        <div className="h-[4px] w-32 bg-orange-600 shadow-[0_0_20px_#ff4500]" />
+                        <p className="cyber-neon text-4xl md:text-5xl lg:text-7xl">
+                            Systems Engineer // Data Architect
+                        </p>
                     </div>
                 </motion.div>
-            )}
-        </AnimatePresence>
-    );
-};
 
-export default function App() {
-    const [isPortalOpen, setIsPortalOpen] = useState(false);
-    const [selectedDirective, setSelectedDirective] = useState<string | null>(null);
-    const heroRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: heroRef,
-        offset: ["start start", "end start"]
-    });
+                <motion.div className="relative w-[500px] md:w-[700px] h-[500px] md:h-[700px] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 particle-grid opacity-80" />
+                    <div className="absolute inset-x-0 inset-y-0 bg-cyan-500/10 blur-[150px] energy-emanate rounded-full" />
+                    <motion.div
+                        animate={{ y: [0, -40, 0], rotate: [0, 8, 0] }}
+                        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                        className="relative z-30 w-full h-full p-12"
+                    >
+                        <img src="/sacred_symbol.png" alt="Sacred Symbol" className="w-full h-full object-contain sacred-glow" />
+                    </motion.div>
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 100, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border border-white/20 rounded-full border-dashed scale-125" />
+                    <motion.div animate={{ rotate: -360 }} transition={{ duration: 120, repeat: Infinity, ease: "linear" }} className="absolute inset-[10%] border border-cyan-500/20 rounded-full border-dotted scale-110" />
+                </motion.div>
+            </section>
 
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-    const opacity = useTransform(scrollYProgress, [0, 0.9], [1, 0]);
+            {/* --- MENU SECTION --- */}
+            <section className="mb-48 relative z-30 max-w-7xl mx-auto px-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    {SERVICES.map((s) => (
+                        <motion.div
+                            layoutId={s.id}
+                            key={s.id}
+                            onClick={() => setSelectedId(s.id)}
+                            className="nav-card min-h-[180px] flex flex-col items-center justify-center text-center p-10 group"
+                        >
+                            <s.icon className={`w-14 h-14 ${s.color} mb-6 group-hover:scale-125 transition-transform duration-500`} />
+                            <h3 className="text-xl font-black tracking-[0.3em] uppercase text-white">
+                                {s.title}
+                            </h3>
+                            <div className="mt-6 w-full h-[1px] bg-white/10 group-hover:bg-cyan-500/50 transition-colors" />
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
 
-    useEffect(() => {
-        if (selectedDirective) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-    }, [selectedDirective]);
-
-    return (
-        <div className="relative min-h-screen bg-[#030014]">
-            <DaemonLogo />
+            {/* --- MODAL --- */}
             <AnimatePresence>
-                {selectedDirective === "Data Core" ? (
-                    <DataCoreDetail onClose={() => setSelectedDirective(null)} />
-                ) : selectedDirective === "Intelligent Automation" ? (
-                    <IntelligentAutomationDetail onClose={() => setSelectedDirective(null)} />
-                ) : selectedDirective === "Service Support & API" ? (
-                    <ServiceSupportDetail onClose={() => setSelectedDirective(null)} />
-                ) : selectedDirective === "Web 3 & Blockchain" ? (
-                    <Web3BlockchainDetail onClose={() => setSelectedDirective(null)} />
-                ) : selectedDirective === "Ecommerce Intelligence" ? (
-                    <EcommerceDetail onClose={() => setSelectedDirective(null)} />
-                ) : selectedDirective && (
-                    <GenericDetail title={selectedDirective} onClose={() => setSelectedDirective(null)} />
+                {activeService && (
+                    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 md:p-10 backdrop-blur-3xl bg-black/60">
+                        <motion.div
+                            layoutId={activeService.id}
+                            className="bg-zinc-900/90 border border-cyan-500/30 rounded-[3rem] w-full max-w-7xl max-h-[90vh] overflow-y-auto lg:overflow-hidden relative shadow-[0_0_100px_rgba(0,242,255,0.1)] custom-scrollbar"
+                        >
+                            <button onClick={() => setSelectedId(null)} className="absolute top-8 right-8 z-[1001] bg-white/5 hover:bg-white/10 p-4 rounded-full transition-colors">
+                                <X size={32} />
+                            </button>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+                                {/* Info Side */}
+                                <div className="p-10 md:p-16 space-y-12 overflow-y-auto">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-6">
+                                            <activeService.icon className={`w-16 h-16 ${activeService.color}`} />
+                                            <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">{activeService.title}</h2>
+                                        </div>
+                                        <p className="text-2xl md:text-3xl font-light italic text-white/90 leading-tight border-l-8 border-orange-600 pl-8">
+                                            "{activeService.description}"
+                                        </p>
+                                    </div>
+
+                                    {/* GitHub Projects Section */}
+                                    <div className="space-y-6">
+                                        <div className="flex items-center gap-3">
+                                            <Code2 className="text-orange-500" size={20} />
+                                            <h3 className="glass-label text-orange-500 m-0">GitHub Respositories</h3>
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            {activeService.githubProjects.map((proj) => (
+                                                <a
+                                                    key={proj.name}
+                                                    href={proj.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="group/proj p-6 bg-white/[0.03] border border-white/5 rounded-2xl hover:bg-white/5 transition-all flex items-center justify-between"
+                                                >
+                                                    <div className="space-y-1">
+                                                        <p className="text-lg font-bold text-white group-hover/proj:text-cyan-400 transition-colors uppercase tracking-widest">{proj.name}</p>
+                                                        <p className="text-sm text-white/40">{proj.desc}</p>
+                                                    </div>
+                                                    <ExternalLink size={18} className="text-white/20 group-hover/proj:text-white transition-colors" />
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                        <div>
+                                            <p className="glass-label text-orange-500">Tech Stack</p>
+                                            <p className="text-cyan-400 text-lg font-mono">{activeService.tech}</p>
+                                        </div>
+                                        <div>
+                                            <p className="glass-label text-orange-500">Operational Focus</p>
+                                            <p className="text-white/60 text-lg uppercase tracking-[0.2em]">{activeService.target}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Graphic Side */}
+                                <div className="bg-white/[0.02] border-l border-white/5 p-16 hidden lg:flex flex-col justify-between">
+                                    <div className="flex justify-between items-center mb-8">
+                                        <div className="flex items-center gap-4">
+                                            <Activity className="text-cyan-400 animate-pulse" />
+                                            <span className="text-sm font-mono tracking-widest text-cyan-400">DATA STREAM: ACTIVE</span>
+                                        </div>
+                                        <span className="text-[10px] font-mono text-white/20 uppercase tracking-[0.4em]">Node Protocol 0xDAEMON</span>
+                                    </div>
+
+                                    <div className="flex-1 relative min-h-[300px]">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart data={chartData}>
+                                                <Area type="monotone" dataKey="v" stroke="#00f2ff" fill="rgba(0, 242, 255, 0.1)" strokeWidth={4} />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                    <p className="mt-8 text-white/20 text-xs font-mono uppercase tracking-[0.5em] text-center">Real-time Telemetry Analytics System</p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
                 )}
             </AnimatePresence>
 
-            {/* Background elements */}
-            <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/20 blur-[120px] rounded-full animate-pulse-glow" />
-                <div className="absolute bottom-[10%] right-[-5%] w-[35%] h-[35%] bg-cyan-900/10 blur-[150px] rounded-full animate-float" />
-            </div>
+            {/* --- CONSOLE --- */}
+            <section className="max-w-7xl mx-auto mb-40 relative z-10 px-6 mt-20">
+                <div className="flex items-center gap-10 mb-12 opacity-40">
+                    <Monitor size={32} className="text-white" />
+                    <h2 className="text-xl font-mono tracking-[1em] uppercase border-b border-white/10 pb-4">Kernel Interface // Root Access</h2>
+                </div>
+                <InteractiveTerminal />
+            </section>
 
-            <main className="relative z-10 font-body">
-                {/* HERO SECTION - MANTAINED AS PILLAR */}
-                <section ref={heroRef} className="relative min-h-[250vh] flex flex-col items-center pt-[10vh] px-4 overflow-x-hidden">
-                    <motion.div style={{ y, opacity }} className="w-full max-w-6xl mx-auto flex flex-col items-center">
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="font-sci text-[var(--accent-orange)] text-[10px] tracking-[8px] mb-8 uppercase"
-                        >
-                            CONCIENCIA & CÓDIGO // HYBRID EVOLUTION
-                        </motion.p>
+            {/* --- FOOTER --- */}
+            <footer className="flex flex-col md:flex-row justify-between items-center pt-32 pb-16 border-t border-white/5 opacity-50 px-10">
+                <p className="text-xs font-mono tracking-[0.8em] uppercase mb-8 md:mb-0">© 2025 DAEMON TECH HYBRID EVOLUTION // SYNTHETIC ARCHITECTURE OPERATIONAL</p>
+                <div className="flex gap-20">
+                    <Layers className="hover:text-orange-600 transition-all cursor-pointer scale-150" />
+                    <BarChart3 className="hover:text-cyan-500 transition-all cursor-pointer scale-150" />
+                    <Monitor className="hover:text-white transition-all cursor-pointer scale-150" />
+                </div>
+            </footer>
 
-                        {/* 1. DAEMON TECH TITLE */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1.2 }}
-                            className="text-center mb-4"
-                        >
-                            <h1 className="font-sci text-6xl md:text-9xl font-black italic tracking-tighter text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.3)] uppercase">
-                                DAEMON TECH
-                            </h1>
-                        </motion.div>
-
-                        {/* 2. STACK LINE */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.3, duration: 1 }}
-                            className="text-center mb-16"
-                        >
-                            <div className="flex flex-col md:flex-row gap-4 md:gap-12 items-center justify-center font-sci tracking-[0.2em] uppercase bg-black/40 py-4 px-12 rounded-full border border-white/5 backdrop-blur-sm shadow-[0_0_20px_rgba(168,85,247,0.1)]">
-                                <span className="text-sm md:text-xl font-bold text-slate-300">Data Science</span>
-                                <span className="hidden md:inline text-cyan-500 opacity-50">•</span>
-                                <span className="text-sm md:text-xl font-bold text-slate-300">Web3 & Blockchain</span>
-                                <span className="hidden md:inline text-purple-500 opacity-50">•</span>
-                                <span className="text-sm md:text-xl font-bold text-slate-300">Intelligent Automation</span>
-                            </div>
-                        </motion.div>
-
-                        {/* 3. MANIFESTO */}
-                        <div className="mt-[20vh] mb-[8vh] text-center w-full space-y-4 leading-none">
-                            <motion.h3
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 0.9, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 1 }}
-                                className="text-5xl md:text-8xl font-black tracking-tighter text-white/90 uppercase"
-                            >
-                                NOT HUMAN.
-                            </motion.h3>
-                            <motion.h3
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 0.9, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 1, delay: 0.2 }}
-                                className="text-5xl md:text-8xl font-black tracking-tighter text-white/90 uppercase"
-                            >
-                                NOT AI.
-                            </motion.h3>
-                            <motion.h3
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 1.5, delay: 0.4 }}
-                                className="text-6xl md:text-9xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-cyan-400 to-blue-600 drop-shadow-[0_0_50px_rgba(56,189,248,0.4)] gradient-text-live uppercase"
-                            >
-                                ONLY ONE.
-                            </motion.h3>
-                        </div>
-
-                        {/* 4. THE ARTIFACT */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            viewport={{ once: true }}
-                            className="centered-artifact animate-fade-in relative w-full max-w-md mb-[-2vh] flex justify-center items-center"
-                        >
-                            <div className="absolute w-64 h-64 bg-cyan-500/20 rounded-full blur-[100px] animate-pulse-glow" />
-                            <img src="/sacred_symbol.png" alt="The Artifact" className="w-full object-contain animate-float z-10" />
-                        </motion.div>
-
-                        {/* 5. FER LOGO */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
-                            className="w-full max-w-4xl mx-auto"
-                        >
-                            <img
-                                src="/fer_logo.png"
-                                alt="Fernando Berumen"
-                                className="w-full h-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
-                            />
-                        </motion.div>
-
-                        {/* 6. ENGINEER TITLE */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            transition={{ delay: 1.2 }}
-                            className="mt-0 md:-mt-4 text-center mb-40"
-                        >
-                            <h2 className="font-sci text-2xl md:text-5xl font-black tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-cyan-400 to-blue-600 drop-shadow-[0_0_35px_rgba(56,189,248,0.5)] gradient-text-live">
-                                Intelligent Systems Engineer
-                            </h2>
-                        </motion.div>
-
-                        {/* SCROLL INDICATOR */}
-                        <motion.a
-                            href="#services"
-                            animate={{ y: [0, 10, 0] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className="pb-20 opacity-40 hover:opacity-100 transition duration-500"
-                        >
-                            <ArrowDown className="w-10 h-10 text-white" />
-                        </motion.a>
-                    </motion.div>
-                </section>
-
-                <FeaturedSystem />
-
-                {/* SERVICES SECTION - CORE DIRECTIVES */}
-                <section id="services" className="py-32 lg:py-48 px-4 bg-[#030014]">
-                    <div className="max-w-6xl mx-auto text-center">
-                        <motion.h2
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 0.8, y: 0 }}
-                            viewport={{ once: true }}
-                            className="font-sci text-4xl lg:text-5xl font-bold mb-24 tracking-widest uppercase"
-                        >
-                            Core Directives
-                        </motion.h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                            {SERVICES.map((service, index) => (
-                                <motion.div
-                                    key={service.title}
-                                    initial={{ opacity: 0, y: 50 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: index * 0.1 }}
-                                >
-                                    <ServiceCard
-                                        service={service}
-                                        onClick={() => setSelectedDirective(service.title)}
-                                    />
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* INTERACTIVE TERMINAL SECTION */}
-                <section className="py-20 px-4 mb-20">
-                    <InteractiveTerminal />
-                </section>
-
-                {/* Footer */}
-                <footer className="text-center py-20 px-4 border-t border-white/5 bg-[#030014]">
-                    <p style={{ padding: '80px 20px', textAlign: 'center', fontSize: '10px', color: '#444', fontFamily: 'JetBrains Mono', letterSpacing: '4px' }}>
-                        &copy; 2025 HYBRID EVOLUTION | DAEMON TECH SYSTEM | DEVELOPED BY FERNANDO BERUMEN
-                    </p>
-                </footer>
-            </main>
-
-            {/* Contact Trigger */}
-            <motion.button
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setIsPortalOpen(true)}
-                className="fixed bottom-10 right-10 w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center z-[90] shadow-[0_0_30px_rgba(168,85,247,0.5)] transition-shadow hover:shadow-[0_0_50px_rgba(56,189,248,0.8)]"
-            >
-                <MessageCircle className="w-8 h-8 text-white" />
-            </motion.button>
-
-            {/* Contact Portal Modal */}
-            <ContactPortal isOpen={isPortalOpen} onClose={() => setIsPortalOpen(false)} />
         </div>
     );
 }
